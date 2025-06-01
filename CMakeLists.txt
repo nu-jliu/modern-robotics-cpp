@@ -19,11 +19,6 @@ project(modern_robotics)
 # find_package(can_device REQUIRED)
 find_package(Armadillo REQUIRED)
 
-find_package(Boost 
-  REQUIRED
-  COMPONENTS system
-  )
-
 include(FetchContent)
 FetchContent_Declare(
   termcolor
@@ -80,7 +75,6 @@ target_include_directories(${PROJECT_NAME}
 # and paths to th locations of header files
 target_link_libraries(${PROJECT_NAME} 
   PUBLIC
-  Boost::system
   termcolor
   ${ARMADILLO_LIBRARIES}
   )
