@@ -5,7 +5,7 @@
 #include <cmath>
 #include <cstdlib>
 
-namespace modern_robotics
+namespace mr
 {
 constexpr double tolerance = 1e-6;
 

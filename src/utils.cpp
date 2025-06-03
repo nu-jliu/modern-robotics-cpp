@@ -1,7 +1,7 @@
 #include "modern_robotics/utils.hpp"
 #include <cmath>
 
-namespace modern_robotics
+namespace mr
 {
 const arma::vec Normalize(const arma::vec & vec)
 {
