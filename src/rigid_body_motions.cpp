@@ -88,4 +88,12 @@ const arma::mat44 RpToTrans(const arma::mat33 & R, const arma::vec3 & p)
 
   return arma::join_vert(upper, lower);
 }
+
+const std::tuple<const arma::mat33, const arma::vec3> TransToRp(const arma::mat44 & T)
+{
+  const arma::mat33 R = T.submat(0, 0, 2, 2);
+  const arma::vec3 p = T.submat(0, 3, 2, 3);
+
+  return {R, p};
+}
 }

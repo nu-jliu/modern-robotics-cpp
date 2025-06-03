@@ -45,7 +45,13 @@ const arma::mat33 MatrixLog3(const arma::mat33 & R);
 /// \return A homogeneous transformation matrix corresponding to the inputs
 const arma::mat44 RpToTrans(const arma::mat33 & R, const arma::vec3 & p);
 
+/// \brief Converts a homogeneous transformation matrix into a rotation matrix
+///        and position vector
+/// \param T A homogeneous transformation matrix
+/// \return R: The corresponding rotation matrix,
+/// \return p: The corresponding position vector.
 const std::tuple<const arma::mat33, const arma::vec3> TransToRp(const arma::mat44 & T);
+
 const arma::mat33 TransInv(const arma::mat44 & T);
 const arma::mat33 VecTose3(const arma::vec3 & V);
 const arma::vec3 se3ToVec(const arma::mat33 & se3mat);
