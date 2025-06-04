@@ -96,4 +96,16 @@ const std::tuple<const arma::mat33, const arma::vec3> TransToRp(const arma::mat4
 
   return {R, p};
 }
+
+const arma::mat44 TransInv(const arma::mat44 & T)
+{
+  const auto &[R, p] = TransToRp(T);
+  const arma::mat33 Rt = R.t();
+  const arma::vec3 Rtp = Rt * p;
+
+  const arma::mat upper = arma::join_horiz(Rt, -Rtp);
+  const arma::rowvec4 lower{0, 0, 0, 1};
+
+  return arma::join_vert(upper, lower);
+}
 }

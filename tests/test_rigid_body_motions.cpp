@@ -195,3 +195,33 @@ TEST_CASE("Test transformation matrix to rotation matrix and vector", "TransToRp
   REQUIRE_THAT(p.at(1), Catch::Matchers::WithinAbs(0, TOLERANCE));
   REQUIRE_THAT(p.at(2), Catch::Matchers::WithinAbs(3, TOLERANCE));
 }
+
+TEST_CASE("Test inverse of T", "[TransInv]")
+{
+  const arma::mat44 T{
+    {1, 0, 0, 0},
+    {0, 0, -1, 0},
+    {0, 1, 0, 3},
+    {0, 0, 0, 1}
+  };
+
+  const arma::mat44 Tinv = mr::TransInv(T);
+  // std::cout << Tinv << std::endl;
+
+  REQUIRE_THAT(Tinv.at(0, 0), Catch::Matchers::WithinAbs(1, TOLERANCE));
+  REQUIRE_THAT(Tinv.at(0, 1), Catch::Matchers::WithinAbs(0, TOLERANCE));
+  REQUIRE_THAT(Tinv.at(0, 2), Catch::Matchers::WithinAbs(0, TOLERANCE));
+  REQUIRE_THAT(Tinv.at(0, 3), Catch::Matchers::WithinAbs(0, TOLERANCE));
+  REQUIRE_THAT(Tinv.at(1, 0), Catch::Matchers::WithinAbs(0, TOLERANCE));
+  REQUIRE_THAT(Tinv.at(1, 1), Catch::Matchers::WithinAbs(0, TOLERANCE));
+  REQUIRE_THAT(Tinv.at(1, 2), Catch::Matchers::WithinAbs(1, TOLERANCE));
+  REQUIRE_THAT(Tinv.at(1, 3), Catch::Matchers::WithinAbs(-3, TOLERANCE));
+  REQUIRE_THAT(Tinv.at(2, 0), Catch::Matchers::WithinAbs(0, TOLERANCE));
+  REQUIRE_THAT(Tinv.at(2, 1), Catch::Matchers::WithinAbs(-1, TOLERANCE));
+  REQUIRE_THAT(Tinv.at(2, 2), Catch::Matchers::WithinAbs(0, TOLERANCE));
+  REQUIRE_THAT(Tinv.at(2, 3), Catch::Matchers::WithinAbs(0, TOLERANCE));
+  REQUIRE_THAT(Tinv.at(3, 0), Catch::Matchers::WithinAbs(0, TOLERANCE));
+  REQUIRE_THAT(Tinv.at(3, 1), Catch::Matchers::WithinAbs(0, TOLERANCE));
+  REQUIRE_THAT(Tinv.at(3, 2), Catch::Matchers::WithinAbs(0, TOLERANCE));
+  REQUIRE_THAT(Tinv.at(3, 3), Catch::Matchers::WithinAbs(1, TOLERANCE));
+}

@@ -52,9 +52,15 @@ const arma::mat44 RpToTrans(const arma::mat33 & R, const arma::vec3 & p);
 /// \return p: The corresponding position vector.
 const std::tuple<const arma::mat33, const arma::vec3> TransToRp(const arma::mat44 & T);
 
-const arma::mat33 TransInv(const arma::mat44 & T);
-const arma::mat33 VecTose3(const arma::vec3 & V);
-const arma::vec3 se3ToVec(const arma::mat33 & se3mat);
+/// \brief Inverts a homogeneous transformation matrix
+/// \param T A homogeneous transformation matrix
+/// \return The inverse of T
+/// \details Uses the structure of transformation matrices to avoid taking a matrix
+///          inverse, for efficiency.
+const arma::mat44 TransInv(const arma::mat44 & T);
+
+const arma::mat44 VecTose3(const arma::vec6 & V);
+const arma::vec6 se3ToVec(const arma::mat44 & se3mat);
 const arma::mat66 Adjoint(const arma::mat44 & T);
 const arma::vec3 ScrewToAxis(const arma::vec3 & v, const arma::vec3 & p, const double & h);
 const std::tuple<const arma::vec6, double> AxisAng6(const arma::vec6 & expc6);
