@@ -14,8 +14,8 @@ Please refer the document for detailed usage of this package: [docs](https://www
 
 | Environment | Value |
 | ----------- | ----- |
-| Platform | Ubuntu 22.04 LTS |
-| Kernel | 6.9.3-76060903-generic |
+| OS | Ubuntu 22.04.5 LTS |
+| Kernel | 6.12.10-76061203-generic |
 | CMake | 3.22.1 |
 | g++ | 11.4.0 |
 | Armadillo | 10.8.2 |
