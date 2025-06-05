@@ -19,13 +19,13 @@ TEST_CASE("Test near zero", "[NearZero]") {
 }
 
 TEST_CASE("Test normalize vector", "[Normalize]") {
-  const arma::vec vec = {1.0, 2.0, 3.0};
+  const arma::vec vec{1.0, 2.0, 3.0};
   const double norm = std::sqrt(14.0);
   const arma::vec normalized_vec = mr::Normalize(vec);
 
   REQUIRE_THAT(arma::norm(normalized_vec), Catch::Matchers::WithinAbs(1.0, TOLERANCE));
 
-  REQUIRE(mr::NearZero(normalized_vec.at(0) - 1.0 / norm));
-  REQUIRE(mr::NearZero(normalized_vec.at(1) - 2.0 / norm));
-  REQUIRE(mr::NearZero(normalized_vec.at(2) - 3.0 / norm));
+  REQUIRE_THAT(normalized_vec.at(0) - 1.0 / norm, Catch::Matchers::WithinAbs(0.0, TOLERANCE));
+  REQUIRE_THAT(normalized_vec.at(1) - 2.0 / norm, Catch::Matchers::WithinAbs(0.0, TOLERANCE));
+  REQUIRE_THAT(normalized_vec.at(2) - 3.0 / norm, Catch::Matchers::WithinAbs(0.0, TOLERANCE));
 }
