@@ -24,6 +24,7 @@ jobs:
 
     - name: Upgrade System
       run: |
+        sudo apt purge snapd -y
         sudo apt update
         sudo apt upgrade -y
 
