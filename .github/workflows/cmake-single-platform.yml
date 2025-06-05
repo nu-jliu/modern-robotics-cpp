@@ -22,8 +22,16 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Upgrade System
+      run: |
+        sudo apt update
+        sudo apt upgrade -y
+
     - name: Install Armadillo
-      run: sudo apt install libarmadillo-dev doxygen
+      run: sudo apt install libarmadillo-dev -y
+
+    - name: Install Doxygen
+      run: sudo apt install doxygen -y
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
