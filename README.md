@@ -10,7 +10,7 @@ Please refer the document for detailed usage of this package: [docs](https://www
 
 ## Target Platform
 
-![build](https://github.com/nu-jliu/modern-robotics-cpp/actions/workflows/cmake-single-platform.yml/badge.svg)
+![build](https://github.com/nu-jliu/modern-robotics-cpp/actions/workflows/modern-robotics.yml/badge.svg)
 
 | Environment | Value |
 | ----------- | ----- |
