@@ -22,12 +22,6 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Upgrade System
-      run: |
-        sudo apt purge snapd -y
-        sudo apt update
-        sudo apt upgrade -y
-
     - name: Install Armadillo
       run: sudo apt install libarmadillo-dev -y
 
