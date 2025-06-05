@@ -26,7 +26,7 @@ const arma::vec3 so3ToVec(const arma::mat33 & so3mat);
 /// \param expc3 A 3-vector of exponential coordinates for rotation
 /// \return omghat: A unit rotation axis
 /// \return theta: The corresponding rotation angle
-const std::tuple<const arma::vec3, double> AxisAng(const arma::vec3 & expc3);
+const std::tuple<const arma::vec3, double> AxisAng3(const arma::vec3 & expc3);
 
 /// \brief Computes the matrix exponential of a matrix in so(3)
 /// \param so3mat A 3x3 skew-symmetric matrix
@@ -59,12 +59,44 @@ const std::tuple<const arma::mat33, const arma::vec3> TransToRp(const arma::mat4
 ///          inverse, for efficiency.
 const arma::mat44 TransInv(const arma::mat44 & T);
 
+/// \brief Converts a spatial velocity vector into a 4x4 matrix in se3
+/// \param V A 6-vector representing a spatial velocity
+/// \return The 4x4 se3 representation of V
 const arma::mat44 VecTose3(const arma::vec6 & V);
+
+/// \brief Converts an se3 matrix into a spatial velocity vector
+/// \param se3mat A 4x4 matrix in se3
+/// \return The spatial velocity 6-vector corresponding to se3mat
 const arma::vec6 se3ToVec(const arma::mat44 & se3mat);
+
+/// \brief Computes the adjoint representation of a homogeneous transformation matrix
+/// \param T A homogeneous transformation matrix
+/// \return The 6x6 adjoint representation [AdT] of T
 const arma::mat66 Adjoint(const arma::mat44 & T);
-const arma::vec3 ScrewToAxis(const arma::vec3 & v, const arma::vec3 & p, const double & h);
+
+/// \brief Takes a parametric description of a screw axis and converts it to a
+///        normalized screw axis
+/// \param q A point lying on the screw axis
+/// \param s A unit vector in the direction of the screw axis
+/// \param h The pitch of the screw axis
+/// \return A normalized screw axis described by the inputs
+const arma::vec6 ScrewToAxis(const arma::vec3 & q, const arma::vec3 & s, const double & h);
+
+/// \brief Converts a 6-vector of exponential coordinates into screw axis-angle form
+/// \param expc6 A 6-vector of exponential coordinates for rigid-body motion S*theta
+/// \return S: The corresponding normalized screw axis
+/// \return theta: The distance traveled along/about S
 const std::tuple<const arma::vec6, double> AxisAng6(const arma::vec6 & expc6);
+
+/// \brief Computes the matrix exponential of an se3 representation of
+///        exponential coordinates
+/// \param se3mat A matrix in se3
+/// \return The matrix exponential of se3mat
 const arma::mat44 MatrixExp6(const arma::mat44 & se3mat);
+
+/// \brief Computes the matrix logarithm of a homogeneous transformation matrix
+/// \param T A matrix in SE3
+/// \return The matrix logarithm of R
 const arma::mat44 MatrixLog6(const arma::mat44 & T);
 } /// namespace modern_robotics
 
