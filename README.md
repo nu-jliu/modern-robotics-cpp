@@ -24,6 +24,8 @@ Please refer the document for detailed usage of this package: [docs](https://www
 
 1. Rigid-Body Motion: includes all functions that computes the rigid body transformations, that conducts all transformations on rotation and homogenous transformation matrix.
 
+2. Forward Kinematics: includes all function that compute the forward kinematics for a open-chain robot system.
+
 ## Installation
 
 Building from source:
