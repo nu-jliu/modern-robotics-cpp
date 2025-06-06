@@ -31,9 +31,10 @@ Please refer the document for detailed usage of this package: [docs](https://www
 Building from source:
 
 ```bash
-git clone https://github.com/nu-jliu/modern-robotics-cpp.git && cd moder-robotics-cpp
+git clone https://github.com/nu-jliu/modern-robotics-cpp.git && cd modern-robotics-cpp
+mkdir build && cd build
 cmake -DCMAKE_BUILD_TYPE=Release ..
-make -j
+make -j$(nproc)
 sudo make install
 ```
 
