@@ -1,3 +1,4 @@
+#include <limits>
 #include <armadillo>
 
 #include "modern_robotics/rigid_body_motions.hpp"
@@ -100,7 +101,7 @@ const arma::mat44 RpToTrans(const arma::mat33 & R, const arma::vec3 & p)
 const std::tuple<const arma::mat33, const arma::vec3> TransToRp(const arma::mat44 & T)
 {
   const arma::mat33 R = T.submat(0, 0, 2, 2);
-  const arma::vec3 p = T.submat(0, 3, 2, 3);
+  const arma::vec3 p = T.col(3).subvec(0, 2);
 
   return {R, p};
 }
@@ -154,7 +155,7 @@ const arma::mat66 Adjoint(const arma::mat44 & T)
   return AdT;
 }
 
-const arma::vec6 ScrewToAxis(const arma::vec3 & q, const arma::vec3 & s, const double & h)
+const arma::vec6 ScrewToAxis(const arma::vec3 & q, const arma::vec3 & s, const double h)
 {
   const arma::vec3 omg(s);
   const arma::vec3 v = arma::cross(q, s) + h * s;
@@ -182,7 +183,7 @@ const std::tuple<const arma::vec6, double> AxisAng6(const arma::vec6 & expc6)
 const arma::mat44 MatrixExp6(const arma::mat44 & se3mat)
 {
   const arma::mat33 so3mat = se3mat.submat(0, 0, 2, 2);
-  const arma::vec3 vtheta = se3mat.submat(0, 3, 2, 3).as_col();
+  const arma::vec3 vtheta = se3mat.col(3).subvec(0, 2);
   const arma::vec3 omgtheta = so3ToVec(so3mat);
   const double theta = std::get<1>(AxisAng3(omgtheta));
   const arma::mat33 I33(arma::fill::eye);
@@ -237,5 +238,54 @@ const arma::mat44 MatrixLog6(const arma::mat44 & T)
 
   const arma::mat44 se3mat = arma::join_vert(upper, lower);
   return se3mat;
+}
+
+const arma::mat33 ProjectToSO3(const arma::mat33 & mat)
+{
+  arma::mat33 U;
+  arma::vec3 s;
+  arma::mat33 Vh;
+
+  arma::svd(U, s, Vh, mat);
+  arma::mat33 R = U * Vh;
+
+  if (arma::det(R) < 0) {
+    R.col(2) *= -1;
+  }
+
+  return R;
+}
+
+const arma::mat44 ProjectToSE3(const arma::mat44 & mat)
+{
+  const arma::mat33 R = ProjectToSO3(mat.submat(0, 0, 2, 2));
+  const arma::vec3 p = mat.col(3).subvec(0, 2);
+
+  const arma::mat44 T = RpToTrans(R, p);
+  return T;
+}
+
+double DistanceToSO3(const arma::mat33 & mat)
+{
+  if (arma::det(mat) > 0) {
+    const arma::mat33 I33{arma::fill::eye};
+    return arma::norm(mat.t() * mat - I33);
+  }
+
+  return std::numeric_limits<double>::max();
+}
+
+double DistanceToSE3(const arma::mat44 & mat)
+{
+  const arma::mat33 Rmat = mat.submat(0, 0, 2, 2);
+  if (arma::det(Rmat) > 0) {
+    const arma::mat44 I44{arma::fill::eye};
+    const arma::mat upper = arma::join_horiz(Rmat.t() * Rmat, arma::vec3{arma::fill::zeros});
+    const arma::rowvec4 lower = mat.row(3);
+
+    return arma::norm(arma::join_vert(upper, lower) - I44);
+  }
+
+  return std::numeric_limits<double>::max();
 }
 }

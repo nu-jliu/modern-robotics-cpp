@@ -1,6 +1,7 @@
 #include <armadillo>
 #include <catch2/catch_all.hpp>
 #include <tuple>
+#include <iomanip>
 
 #include "modern_robotics/rigid_body_motions.hpp"
 
@@ -414,4 +415,113 @@ TEST_CASE("Test matrix log", "[MatrixLog6]")
   REQUIRE_THAT(se3mat.at(3, 1), Catch::Matchers::WithinAbs(0, TOLERANCE));
   REQUIRE_THAT(se3mat.at(3, 2), Catch::Matchers::WithinAbs(0, TOLERANCE));
   REQUIRE_THAT(se3mat.at(3, 3), Catch::Matchers::WithinAbs(0, TOLERANCE));
+}
+
+TEST_CASE("Test project to SO3", "[ProjectToSO3]")
+{
+  const arma::mat33 mat{
+    {0.675, 0.150, 0.720},
+    {0.370, 0.771, -0.511},
+    {-0.630, 0.619, 0.472}
+  };
+
+  const arma::mat33 R = mr::ProjectToSO3(mat);
+  // std::cout << R << std::endl;
+
+  REQUIRE_THAT(R.at(0, 0), Catch::Matchers::WithinAbs(-0.90951518, TOLERANCE));
+  REQUIRE_THAT(R.at(0, 1), Catch::Matchers::WithinAbs(-0.18158791, TOLERANCE));
+  REQUIRE_THAT(R.at(0, 2), Catch::Matchers::WithinAbs(-0.37390904, TOLERANCE));
+  REQUIRE_THAT(R.at(1, 0), Catch::Matchers::WithinAbs(-0.02079595, TOLERANCE));
+  REQUIRE_THAT(R.at(1, 1), Catch::Matchers::WithinAbs(0.91828357, TOLERANCE));
+  REQUIRE_THAT(R.at(1, 2), Catch::Matchers::WithinAbs(-0.395376811, TOLERANCE));
+  REQUIRE_THAT(R.at(2, 0), Catch::Matchers::WithinAbs(0.41515018, TOLERANCE));
+  REQUIRE_THAT(R.at(2, 1), Catch::Matchers::WithinAbs(-0.35182542, TOLERANCE));
+  REQUIRE_THAT(R.at(2, 2), Catch::Matchers::WithinAbs(-0.83896913, TOLERANCE));
+}
+
+TEST_CASE("Testing project to SE3", "ProjectToSE3")
+{
+  const arma::mat44 mat{
+    {0.675, 0.150, 0.720, 1.2},
+    {0.370, 0.771, -0.511, 5.4},
+    {-0.630, 0.619, 0.472, 3.6},
+    {0.003, 0.002, 0.010, 0.9}
+  };
+
+  const arma::mat44 T = mr::ProjectToSE3(mat);
+  // std::cout << T << std::endl;
+
+  REQUIRE_THAT(T.at(0, 0), Catch::Matchers::WithinAbs(-0.90951518, TOLERANCE));
+  REQUIRE_THAT(T.at(0, 1), Catch::Matchers::WithinAbs(-0.18158791, TOLERANCE));
+  REQUIRE_THAT(T.at(0, 2), Catch::Matchers::WithinAbs(-0.37390904, TOLERANCE));
+  REQUIRE_THAT(T.at(0, 3), Catch::Matchers::WithinAbs(1.2, TOLERANCE));
+  REQUIRE_THAT(T.at(1, 0), Catch::Matchers::WithinAbs(-0.02079595, TOLERANCE));
+  REQUIRE_THAT(T.at(1, 1), Catch::Matchers::WithinAbs(0.91828357, TOLERANCE));
+  REQUIRE_THAT(T.at(1, 2), Catch::Matchers::WithinAbs(-0.395376811, TOLERANCE));
+  REQUIRE_THAT(T.at(1, 3), Catch::Matchers::WithinAbs(5.4, TOLERANCE));
+  REQUIRE_THAT(T.at(2, 0), Catch::Matchers::WithinAbs(0.41515018, TOLERANCE));
+  REQUIRE_THAT(T.at(2, 1), Catch::Matchers::WithinAbs(-0.35182542, TOLERANCE));
+  REQUIRE_THAT(T.at(2, 2), Catch::Matchers::WithinAbs(-0.83896913, TOLERANCE));
+  REQUIRE_THAT(T.at(2, 3), Catch::Matchers::WithinAbs(3.6, TOLERANCE));
+  REQUIRE_THAT(T.at(3, 0), Catch::Matchers::WithinAbs(0, TOLERANCE));
+  REQUIRE_THAT(T.at(3, 1), Catch::Matchers::WithinAbs(0, TOLERANCE));
+  REQUIRE_THAT(T.at(3, 2), Catch::Matchers::WithinAbs(0, TOLERANCE));
+  REQUIRE_THAT(T.at(3, 3), Catch::Matchers::WithinAbs(1, TOLERANCE));
+}
+
+TEST_CASE("Test distance to SO3", "[DistanceToSO3]")
+{
+  const arma::mat33 mat{
+    {1.0, 0.0, 0.0},
+    {0.0, 0.1, -0.95},
+    {0.0, 1.0, 0.1}
+  };
+
+  const double d = mr::DistanceToSO3(mat);
+  // std::cout << std::setprecision(10) << d << std::endl;
+
+  REQUIRE_THAT(d, Catch::Matchers::WithinAbs(0.087755739, TOLERANCE));
+}
+
+TEST_CASE("Test distance to se3", "[DistanceToSE3]")
+{
+  const arma::mat44 mat{
+    {1.0, 0.0, 0.0, 1.2},
+    {0.0, 0.1, -0.95, 1.5},
+    {0.0, 1.0, 0.1, -0.9},
+    {0.0, 0.0, 0.1, 0.98}
+  };
+
+  const double d = mr::DistanceToSE3(mat);
+  // std::cout << std::setprecision(10) << d << std::endl;
+
+  REQUIRE_THAT(d, Catch::Matchers::WithinAbs(0.13385823, TOLERANCE));
+}
+
+TEST_CASE("Test if SO3", "[TestIfSO3]")
+{
+  const arma::mat33 mat{
+    {1.0, 0.0, 0.0},
+    {0.0, 0.1, -0.95},
+    {0.0, 1.0, 0.1}
+  };
+
+  const bool result = mr::TestIfSO3(mat);
+
+  REQUIRE_FALSE(result);
+}
+
+
+TEST_CASE("Test if SE3", "[TestIfSE3]")
+{
+  const arma::mat44 mat{
+    {1.0, 0.0, 0.0, 1.2},
+    {0.0, 0.1, -0.95, 1.5},
+    {0.0, 1.0, 0.1, -0.9},
+    {0.0, 0.0, 0.1, 0.98}
+  };
+
+  const bool result = mr::TestIfSE3(mat);
+
+  REQUIRE_FALSE(result);
 }

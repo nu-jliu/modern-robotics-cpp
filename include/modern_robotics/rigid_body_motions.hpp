@@ -80,7 +80,7 @@ const arma::mat66 Adjoint(const arma::mat44 & T);
 /// \param s A unit vector in the direction of the screw axis
 /// \param h The pitch of the screw axis
 /// \return A normalized screw axis described by the inputs
-const arma::vec6 ScrewToAxis(const arma::vec3 & q, const arma::vec3 & s, const double & h);
+const arma::vec6 ScrewToAxis(const arma::vec3 & q, const arma::vec3 & s, const double h);
 
 /// \brief Converts a 6-vector of exponential coordinates into screw axis-angle form
 /// \param expc6 A 6-vector of exponential coordinates for rigid-body motion S*theta
@@ -98,6 +98,74 @@ const arma::mat44 MatrixExp6(const arma::mat44 & se3mat);
 /// \param T A matrix in SE3
 /// \return The matrix logarithm of R
 const arma::mat44 MatrixLog6(const arma::mat44 & T);
+
+/// \brief Returns a projection of mat into SO(3)
+/// \param mat A matrix near SO(3) to project to SO(3)
+/// \return The closest matrix to R that is in SO(3)
+/// \details Projects a matrix mat to the closest matrix in SO(3) using singular-value
+///          decomposition (see
+///          http://hades.mech.northwestern.edu/index.php/Modern_Robotics_Linear_Algebra_Review).
+///          This function is only appropriate for matrices close to SO(3).
+const arma::mat33 ProjectToSO3(const arma::mat33 & mat);
+
+/// \brief Returns a projection of mat into SE(3)
+/// \param mat A 4x4 matrix to project to SE(3)
+/// \return  The closest matrix to T that is in SE(3)
+/// \details Projects a matrix mat to the closest matrix in SE(3) using singular-value
+///          decomposition (see
+///          http://hades.mech.northwestern.edu/index.php/Modern_Robotics_Linear_Algebra_Review).
+///          This function is only appropriate for matrices close to SE(3).
+const arma::mat44 ProjectToSE3(const arma::mat44 & mat);
+
+/// \brief Returns the Frobenius norm to describe the distance of mat from the SO(3) manifold
+/// \param mat A 3x3 matrix
+/// \return A quantity describing the distance of mat from the SO(3) manifold
+/// \details Computes the distance from mat to the SO(3) manifold using the following
+///          method:
+///            If det(mat) <= 0, return a large number.
+///            If det(mat) > 0, return norm(mat^T.mat - I).
+double DistanceToSO3(const arma::mat33 & mat);
+
+/// \brief Returns the Frobenius norm to describe the distance of mat from the SE(3) manifold
+/// \param mat A 4x4 matrix
+/// \return A quantity describing the distance of mat from the SE(3) manifold
+/// \details Computes the distance from mat to the SE(3) manifold using the following
+///          method:
+///          Compute the determinant of matR, the top 3x3 submatrix of mat.
+///          If det(matR) <= 0, return a large number.
+///          If det(matR) > 0, replace the top 3x3 submatrix of mat with matR^T.matR,
+///          and set the first three entries of the fourth column of mat to zero. Then
+///          return norm(mat - I).
+double DistanceToSE3(const arma::mat44 & mat);
+
+/// \brief Returns true if mat is close to or on the manifold SO(3)
+/// \param mat A 3x3 matrix
+/// \return True if mat is very close to or in SO(3), false otherwise
+/// \details Computes the distance d from mat to the SO(3) manifold using the
+///          following method:
+///          If det(mat) <= 0, d = a large number.
+///          If det(mat) > 0, d = norm(mat^T.mat - I).
+///          If d is close to zero, return true. Otherwise, return false.
+inline bool TestIfSO3(const arma::mat33 & mat)
+{
+  return std::fabs(DistanceToSO3(mat)) < tolerance;
+}
+
+/// \brief Returns true if mat is close to or on the manifold SE(3)
+/// \param mat A 4x4 matrix
+/// \return True if mat is very close to or in SE(3), false otherwise
+/// \details Computes the distance d from mat to the SE(3) manifold using the
+///          following method:
+///          Compute the determinant of the top 3x3 submatrix of mat.
+///          If det(mat) <= 0, d = a large number.
+///          If det(mat) > 0, replace the top 3x3 submatrix of mat with mat^T.mat, and
+///          set the first three entries of the fourth column of mat to zero.
+///          Then d = norm(T - I).
+///          If d is close to zero, return true. Otherwise, return false.
+inline bool TestIfSE3(const arma::mat44 & mat)
+{
+  return std::fabs(DistanceToSE3(mat)) < tolerance;
+}
 } /// namespace modern_robotics
 
 #endif /// MODERN_ROBOTICS__RIGID_BODY_MOTIONS_HPP___
