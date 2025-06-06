@@ -22,7 +22,7 @@ Please refer the document for detailed usage of this package: [docs](https://www
 
 ## Covered Topics
 
-1. Rigid Body Motion: includes all functions that computes the rigid body transformations, that conducts all transformations on rotation and homogenous transformation matrix.
+1. Rigid-Body Motion: includes all functions that computes the rigid body transformations, that conducts all transformations on rotation and homogenous transformation matrix.
 
 ## Installation
 
