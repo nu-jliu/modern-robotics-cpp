@@ -5,6 +5,9 @@
 
 namespace mr
 {
+/// \defgroup velocity_kinematics_and_statics Chapter 5: Velocity Kinematics and Statics
+
+/// \ingroup velocity_kinematics_and_statics
 /// \brief Computes the body Jacobian for an open chain robot
 /// \param Blist The joint screw axes in the end-effector frame when the
 ///              manipulator is at the home position, in the format of a
@@ -16,6 +19,7 @@ const arma::mat JacobianBody(
   const std::vector<double> & thetalist
 );
 
+/// \ingroup velocity_kinematics_and_statics
 /// \brief Computes the space Jacobian for an open chain robot
 /// \param Slist The joint screw axes in the space frame when the
 ///              manipulator is at the home position, in the format of a

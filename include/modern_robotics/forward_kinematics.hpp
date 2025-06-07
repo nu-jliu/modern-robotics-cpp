@@ -6,6 +6,9 @@
 
 namespace mr
 {
+/// \defgroup forward_kinematics Chapter 4: Forward Kinematics
+
+/// \ingroup forward_kinematics
 /// \brief Computes forward kinematics in the body frame for an open chain robot
 /// \param M The home configuration (position and orientation) of the end-effector
 /// \param Blist The joint screw axes in the end-effector frame when the
@@ -21,6 +24,7 @@ const arma::mat44 FKinBody(
   const std::vector<double> & thetalist
 );
 
+/// \ingroup forward_kinematics
 /// \brief Computes forward kinematics in the space frame for an open chain robot
 /// \param M The home configuration (position and orientation) of the end-effector
 /// \param Slist The joint screw axes in the space frame when the
