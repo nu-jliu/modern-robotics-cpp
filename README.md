@@ -1,4 +1,4 @@
-# Modern Robotics CPP
+# Modern Robotics C++
 
 **Author**: Jingkun Liu
 
