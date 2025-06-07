@@ -26,6 +26,8 @@ Please refer the document for detailed usage of this package: [docs](https://www
 
 2. Forward Kinematics: includes all function that compute the forward kinematics for a open-chain robot system.
 
+3. Velocity Kinematics and Statics: includes all functions that compute jacobian for a open-chain robot systsm.
+
 ## Installation
 
 Building from source:
