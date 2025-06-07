@@ -2,7 +2,7 @@
 
 **Author**: Jingkun Liu
 
-A Modern C++ Package that provides the functions accompanying the book [*Modern Robotics:
+A Modern C++ implemetation of all functions accompanying the book [*Modern Robotics:
 Mechanics, Planning, and Control*](http://modernrobotics.org) (Kevin Lynch
 and Frank Park, Cambridge University Press 2017)
 
