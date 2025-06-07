@@ -21,7 +21,7 @@ namespace mr
 const arma::mat44 FKinBody(
   const arma::mat44 & M,
   const std::vector<arma::vec6> & Blist,
-  const std::vector<double> & thetalist
+  const arma::vec & thetalist
 );
 
 /// \ingroup forward_kinematics
@@ -37,7 +37,7 @@ const arma::mat44 FKinBody(
 const arma::mat44 FKinSpace(
   const arma::mat44 & M,
   const std::vector<arma::vec6> & Slist,
-  const std::vector<double> & thetalist
+  const arma::vec & thetalist
 );
 } /// namespace mr
 

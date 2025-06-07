@@ -16,7 +16,7 @@ namespace mr
 /// \return The body Jacobian corresponding to the inputs (6xn real numbers)
 const arma::mat JacobianBody(
   const std::vector<arma::vec6> & Blist,
-  const std::vector<double> & thetalist
+  const arma::vec & thetalist
 );
 
 /// \ingroup velocity_kinematics_and_statics
@@ -28,7 +28,7 @@ const arma::mat JacobianBody(
 /// \return The space Jacobian corresponding to the inputs (6xn real numbers)
 const arma::mat JacobianSpace(
   const std::vector<arma::vec6> & Slist,
-  const std::vector<double> & thetalist
+  const arma::vec & thetalist
 );
 }
 

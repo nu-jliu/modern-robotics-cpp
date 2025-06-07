@@ -17,7 +17,7 @@ TEST_CASE("Test forward kinematic body", "[FKinBody]")
     {0, 0, 0, 0, 1, 0},
     {0, 0, 1, 0, 0, 0.1}
   };
-  const std::vector<double> thetalist{M_PI_2, 3, M_PI};
+  const arma::vec thetalist{M_PI_2, 3, M_PI};
 
   const arma::mat44 T = mr::FKinBody(M, Blist, thetalist);
   // std::cout << T << std::endl;
@@ -53,7 +53,7 @@ TEST_CASE("Test forward kinematics on space", "[FKinSpace]")
     {0, 0, 0, 0, 1, 0},
     {0, 0, -1, -6, 0, -0.1}
   };
-  const std::vector<double> thetalist{M_PI_2, 3, M_PI};
+  const arma::vec thetalist{M_PI_2, 3, M_PI};
 
   const arma::mat44 T = mr::FKinSpace(M, Slist, thetalist);
   // std::cout << T << std::endl;

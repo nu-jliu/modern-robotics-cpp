@@ -5,11 +5,11 @@ namespace mr
 {
 const arma::mat JacobianBody(
   const std::vector<arma::vec6> & Blist,
-  const std::vector<double> & thetalist
+  const arma::vec & thetalist
 )
 {
-  arma::mat Jb{6, Blist.size(), arma::fill::zeros};
-  const size_t n = thetalist.size();
+  const size_t n = Blist.size();
+  arma::mat Jb{6, n, arma::fill::zeros};
   arma::mat44 T{arma::fill::eye};
 
   for (size_t j = 0; j < n - 1; ++j) {
@@ -32,11 +32,11 @@ const arma::mat JacobianBody(
 
 const arma::mat JacobianSpace(
   const std::vector<arma::vec6> & Slist,
-  const std::vector<double> & thetalist
+  const arma::vec & thetalist
 )
 {
-  const size_t n = thetalist.size();
-  arma::mat Js{6, Slist.size(), arma::fill::zeros};
+  const size_t n = Slist.size();
+  arma::mat Js{6, n, arma::fill::zeros};
   arma::mat44 T{arma::fill::eye};
 
   for (size_t i = 1; i < n; ++i) {
