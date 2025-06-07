@@ -6,7 +6,8 @@ A Modern C++ Package that provides the functions accompanying the book [*Modern 
 Mechanics, Planning, and Control*](http://modernrobotics.org) (Kevin Lynch
 and Frank Park, Cambridge University Press 2017)
 
-Please refer the document for detailed usage of this package: [docs](https://www.allen-liu.net/modern-robotics-cpp/)
+Official Documents: [docs](https://www.allen-liu.net/modern-robotics-cpp/)
+Source code: [source](https://github.com/nu-jliu/modern-robotics-cpp)
 
 ## Target Platform
 
