@@ -7,6 +7,7 @@ Mechanics, Planning, and Control*](http://modernrobotics.org) (Kevin Lynch
 and Frank Park, Cambridge University Press 2017)
 
 Official Documents: [docs](https://www.allen-liu.net/modern-robotics-cpp/)
+
 Source code: [source](https://github.com/nu-jliu/modern-robotics-cpp)
 
 ## Target Platform
