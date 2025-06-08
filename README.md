@@ -70,13 +70,11 @@ int main(int argc, char * argv[]) {
 
 Example output:
 
-\f[
-\begin{bmatrix}
+\f{bmatrix}{
 1 & 4 & 7 \\
 2 & 5 & 8 \\
 3 & 6 & 9
-\end{bmatrix}
-\f]
+\f}
 
 To use with CMake package
 
