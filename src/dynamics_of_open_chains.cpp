@@ -116,4 +116,79 @@ const arma::mat MassMatrix(
 
   return M;
 }
+
+const arma::vec VelQuandraticForces(
+  const arma::vec & thetalist,
+  const arma::vec & dthetalist,
+  const std::vector<arma::mat44> Mlist,
+  const std::vector<arma::mat66> & Glist,
+  const std::vector<arma::vec6> & Slist
+)
+{
+  const arma::vec ddthetalist{thetalist.size(), arma::fill::zeros};
+  const arma::vec3 g{arma::fill::zeros};
+  const arma::vec6 Ftip{arma::fill::zeros};
+
+  const arma::vec c = InverseDynamics(
+    thetalist,
+    dthetalist,
+    ddthetalist,
+    g,
+    Ftip,
+    Mlist,
+    Glist,
+    Slist
+  );
+  return c;
+}
+
+const arma::vec GravityForces(
+  const arma::vec & thetalist,
+  const arma::vec3 & g,
+  const std::vector<arma::mat44> & Mlist,
+  const std::vector<arma::mat66> & Glist,
+  const std::vector<arma::vec6> & Slist
+)
+{
+  const arma::vec dthetalist{thetalist.size(), arma::fill::zeros};
+  const arma::vec ddthetalist{thetalist.size(), arma::fill::zeros};
+  const arma::vec6 Ftip{arma::fill::zeros};
+
+  const arma::vec grav = InverseDynamics(
+    thetalist,
+    dthetalist,
+    ddthetalist,
+    g,
+    Ftip,
+    Mlist,
+    Glist,
+    Slist
+  );
+  return grav;
+}
+
+const arma::vec EndEffectorForces(
+  const arma::vec & thetalist,
+  const arma::vec6 & Ftip,
+  const std::vector<arma::mat44> & Mlist,
+  const std::vector<arma::mat66> & Glist,
+  const std::vector<arma::vec6> & Slist
+)
+{
+  const arma::vec dthetalist{thetalist.size(), arma::fill::zeros};
+  const arma::vec ddthetalist{thetalist.size(), arma::fill::zeros};
+  const arma::vec3 g{arma::fill::zeros};
+
+  const arma::vec JTFtip = InverseDynamics(
+    thetalist,
+    dthetalist,
+    ddthetalist,
+    g,
+    Ftip,
+    Mlist,
+    Glist,
+    Slist
+  );
+  return JTFtip;
+}
 }

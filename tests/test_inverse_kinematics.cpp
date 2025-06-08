@@ -35,6 +35,7 @@ TEST_CASE("Test body inverse kinematics", "[IKinBody]")
   // std::cout << std::boolalpha << success << std::noboolalpha << std::endl;
 
   REQUIRE(success);
+  REQUIRE(thetalist.size() == Blist.size());
   REQUIRE_THAT(thetalist.at(0), Catch::Matchers::WithinAbs(1.57073819, TOLERANCE));
   REQUIRE_THAT(thetalist.at(1), Catch::Matchers::WithinAbs(2.999667, TOLERANCE));
   REQUIRE_THAT(thetalist.at(2), Catch::Matchers::WithinAbs(3.14153913, TOLERANCE));
@@ -68,6 +69,7 @@ TEST_CASE("Testing space inverse kinematics", "[IKinSpace]")
   // std::cout << std::boolalpha << success << std::noboolalpha << std::endl;
 
   REQUIRE(success);
+  REQUIRE(thetalist.size() == Slist.size());
   REQUIRE_THAT(thetalist.at(0), Catch::Matchers::WithinAbs(1.57073819, TOLERANCE));
   REQUIRE_THAT(thetalist.at(1), Catch::Matchers::WithinAbs(2.999667, TOLERANCE));
   REQUIRE_THAT(thetalist.at(2), Catch::Matchers::WithinAbs(3.14153913, TOLERANCE));

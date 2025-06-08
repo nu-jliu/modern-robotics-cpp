@@ -57,6 +57,7 @@ TEST_CASE("Test inverse dynamics", "[InverseDynamics]")
   const arma::vec ddthetalist{2, 1.5, 1};
   const arma::vec3 g{0, 0, -9.8};
   const arma::vec6 Ftip{1, 1, 1, 1, 1, 1};
+
   const arma::mat44 M01{
     {1, 0, 0, 0},
     {0, 1, 0, 0},
@@ -88,7 +89,6 @@ TEST_CASE("Test inverse dynamics", "[InverseDynamics]")
   const arma::mat66 G3 = arma::diagmat(
     arma::vec6{0.0494433, 0.0494433, 0.004095, 2.275, 2.275, 2.275}
   );
-
   const std::vector<arma::mat44> Mlist{M01, M12, M23, M34};
   const std::vector<arma::mat66> Glist{G1, G2, G3};
   const std::vector<arma::vec6> Slist{
@@ -109,6 +109,7 @@ TEST_CASE("Test inverse dynamics", "[InverseDynamics]")
   );
   // std::cout << taulist << std::endl;
 
+  REQUIRE(taulist.size() == 3);
   REQUIRE_THAT(taulist.at(0), Catch::Matchers::WithinAbs(74.69616155, TOLERANCE));
   REQUIRE_THAT(taulist.at(1), Catch::Matchers::WithinAbs(-33.06766016, TOLERANCE));
   REQUIRE_THAT(taulist.at(2), Catch::Matchers::WithinAbs(-3.23057314, TOLERANCE));
@@ -160,6 +161,8 @@ TEST_CASE("Test constructing mass matrix", "[MassMatrix]")
   const arma::mat M = mr::MassMatrix(thetalist, Mlist, Glist, Slist);
   // std::cout << M << std::endl;
 
+  REQUIRE(M.n_rows == 3);
+  REQUIRE(M.n_cols == 3);
   REQUIRE_THAT(M.at(0, 0), Catch::Matchers::WithinAbs(2.25433380e+01, TOLERANCE));
   REQUIRE_THAT(M.at(0, 1), Catch::Matchers::WithinAbs(-3.07146754e-01, TOLERANCE));
   REQUIRE_THAT(M.at(0, 2), Catch::Matchers::WithinAbs(-7.18426391e-03, TOLERANCE));
@@ -169,4 +172,163 @@ TEST_CASE("Test constructing mass matrix", "[MassMatrix]")
   REQUIRE_THAT(M.at(2, 0), Catch::Matchers::WithinAbs(-7.18426391e-03, TOLERANCE));
   REQUIRE_THAT(M.at(2, 1), Catch::Matchers::WithinAbs(4.32157368e-01, TOLERANCE));
   REQUIRE_THAT(M.at(2, 2), Catch::Matchers::WithinAbs(1.91630858e-01, TOLERANCE));
+}
+
+TEST_CASE("Test crolosis", "[VelQuandraticForces]")
+{
+  const arma::vec thetalist{0.1, 0.1, 0.1};
+  const arma::vec dthetalist{0.1, 0.2, 0.3};
+
+  const arma::mat44 M01{
+    {1, 0, 0, 0},
+    {0, 1, 0, 0},
+    {0, 0, 1, 0.089159},
+    {0, 0, 0, 1}
+  };
+  const arma::mat44 M12{
+    {0, 0, 1, 0.28},
+    {0, 1, 0, 0.13585},
+    {-1, 0, 0, 0},
+    {0, 0, 0, 1}
+  };
+  const arma::mat44 M23{
+    {1, 0, 0, 0},
+    {0, 1, 0, -0.1197},
+    {0, 0, 1, 0.395},
+    {0, 0, 0, 1}
+  };
+  const arma::mat44 M34 {
+    {1, 0, 0, 0},
+    {0, 1, 0, 0},
+    {0, 0, 1, 0.14225},
+    {0, 0, 0, 1}
+  };
+  const arma::mat66 G1 = arma::diagmat(arma::vec6{0.010267, 0.010267, 0.00666, 3.7, 3.7, 3.7});
+  const arma::mat66 G2 = arma::diagmat(
+    arma::vec6{0.22689, 0.22689, 0.0151074, 8.393, 8.393, 8.393}
+  );
+  const arma::mat66 G3 = arma::diagmat(
+    arma::vec6{0.0494433, 0.0494433, 0.004095, 2.275, 2.275, 2.275}
+  );
+  const std::vector<arma::mat44> Mlist{M01, M12, M23, M34};
+  const std::vector<arma::mat66> Glist{G1, G2, G3};
+  const std::vector<arma::vec6> Slist{
+    {1, 0, 1, 0, 1, 0},
+    {0, 1, 0, -0.089, 0, 0},
+    {0, 1, 0, -0.089, 0, 0.425}
+  };
+
+  const arma::vec c = mr::VelQuandraticForces(thetalist, dthetalist, Mlist, Glist, Slist);
+  // std::cout << c << std::endl;
+
+  REQUIRE(c.size() == 3);
+  REQUIRE_THAT(c.at(0), Catch::Matchers::WithinAbs(0.26453118, TOLERANCE));
+  REQUIRE_THAT(c.at(1), Catch::Matchers::WithinAbs(-0.05505157, TOLERANCE));
+  REQUIRE_THAT(c.at(2), Catch::Matchers::WithinAbs(-0.00689132, TOLERANCE));
+}
+
+TEST_CASE("Test gravitational force", "[GravityForces]")
+{
+  const arma::vec thetalist{0.1, 0.1, 0.1};
+  const arma::vec3 g{0, 0, -9.8};
+  const arma::mat44 M01{
+    {1, 0, 0, 0},
+    {0, 1, 0, 0},
+    {0, 0, 1, 0.089159},
+    {0, 0, 0, 1}
+  };
+  const arma::mat44 M12{
+    {0, 0, 1, 0.28},
+    {0, 1, 0, 0.13585},
+    {-1, 0, 0, 0},
+    {0, 0, 0, 1}
+  };
+  const arma::mat44 M23{
+    {1, 0, 0, 0},
+    {0, 1, 0, -0.1197},
+    {0, 0, 1, 0.395},
+    {0, 0, 0, 1}
+  };
+  const arma::mat44 M34 {
+    {1, 0, 0, 0},
+    {0, 1, 0, 0},
+    {0, 0, 1, 0.14225},
+    {0, 0, 0, 1}
+  };
+  const arma::mat66 G1 = arma::diagmat(arma::vec6{0.010267, 0.010267, 0.00666, 3.7, 3.7, 3.7});
+  const arma::mat66 G2 = arma::diagmat(
+    arma::vec6{0.22689, 0.22689, 0.0151074, 8.393, 8.393, 8.393}
+  );
+  const arma::mat66 G3 = arma::diagmat(
+    arma::vec6{0.0494433, 0.0494433, 0.004095, 2.275, 2.275, 2.275}
+  );
+
+  const std::vector<arma::mat44> Mlist{M01, M12, M23, M34};
+  const std::vector<arma::mat66> Glist{G1, G2, G3};
+  const std::vector<arma::vec6> Slist{
+    {1, 0, 1, 0, 1, 0},
+    {0, 1, 0, -0.089, 0, 0},
+    {0, 1, 0, -0.089, 0, 0.425}
+  };
+
+  const arma::vec grav = mr::GravityForces(thetalist, g, Mlist, Glist, Slist);
+  // std::cout << grav << std::endl;
+
+  REQUIRE(grav.size() == 3);
+  REQUIRE_THAT(grav.at(0), Catch::Matchers::WithinAbs(28.40331262, TOLERANCE));
+  REQUIRE_THAT(grav.at(1), Catch::Matchers::WithinAbs(-37.64094817, TOLERANCE));
+  REQUIRE_THAT(grav.at(2), Catch::Matchers::WithinAbs(-5.4415892, TOLERANCE));
+}
+
+TEST_CASE("Test end effector force", "[EndEffectorForces]")
+{
+  const arma::vec thetalist{0.1, 0.1, 0.1};
+  const arma::vec6 Ftip{1, 1, 1, 1, 1, 1};
+
+  const arma::mat44 M01{
+    {1, 0, 0, 0},
+    {0, 1, 0, 0},
+    {0, 0, 1, 0.089159},
+    {0, 0, 0, 1}
+  };
+  const arma::mat44 M12{
+    {0, 0, 1, 0.28},
+    {0, 1, 0, 0.13585},
+    {-1, 0, 0, 0},
+    {0, 0, 0, 1}
+  };
+  const arma::mat44 M23{
+    {1, 0, 0, 0},
+    {0, 1, 0, -0.1197},
+    {0, 0, 1, 0.395},
+    {0, 0, 0, 1}
+  };
+  const arma::mat44 M34 {
+    {1, 0, 0, 0},
+    {0, 1, 0, 0},
+    {0, 0, 1, 0.14225},
+    {0, 0, 0, 1}
+  };
+  const arma::mat66 G1 = arma::diagmat(arma::vec6{0.010267, 0.010267, 0.00666, 3.7, 3.7, 3.7});
+  const arma::mat66 G2 = arma::diagmat(
+    arma::vec6{0.22689, 0.22689, 0.0151074, 8.393, 8.393, 8.393}
+  );
+  const arma::mat66 G3 = arma::diagmat(
+    arma::vec6{0.0494433, 0.0494433, 0.004095, 2.275, 2.275, 2.275}
+  );
+  const std::vector<arma::mat44> Mlist{M01, M12, M23, M34};
+  const std::vector<arma::mat66> Glist{G1, G2, G3};
+  const std::vector<arma::vec6> Slist{
+    {1, 0, 1, 0, 1, 0},
+    {0, 1, 0, -0.089, 0, 0},
+    {0, 1, 0, -0.089, 0, 0.425}
+  };
+
+  const arma::vec JTFtip = mr::EndEffectorForces(thetalist, Ftip, Mlist, Glist, Slist);
+  // std::cout << JTFtip << std::endl;
+
+  REQUIRE(JTFtip.size() == 3);
+  REQUIRE_THAT(JTFtip.at(0), Catch::Matchers::WithinAbs(1.40954608, TOLERANCE));
+  REQUIRE_THAT(JTFtip.at(1), Catch::Matchers::WithinAbs(1.85771497, TOLERANCE));
+  REQUIRE_THAT(JTFtip.at(2), Catch::Matchers::WithinAbs(1.392409, TOLERANCE));
 }
