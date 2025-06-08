@@ -55,14 +55,25 @@ int main(int argc, char * argv[]) {
     arma::mat33 R{
         {1, 2, 3},
         {4, 5, 6},
-        {4, 5, 6}
+        {7, 8, 9}
     };
 
     arma::mat33 R_inv = mr::RotInv(R);
     std::cout << R_inv << std::endl;
-}
 
+    return 0;
+}
 ```
+
+Example output:
+
+$$
+\begin{bmatrix}
+1 & 4 & 7 \\
+2 & 5 & 8 \\
+3 & 6 & 9
+\end{bmatrix}
+$$
 
 To use with CMake package
 

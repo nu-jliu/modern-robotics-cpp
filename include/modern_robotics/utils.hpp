@@ -11,10 +11,10 @@ constexpr double tolerance = 1e-6;
 
 /// \brief Check if a number is close to zero
 /// \param x The number to check
-/// \return True if the number is close to zero, false otherwise
-constexpr bool NearZero(const double x)
+/// \return true if the number is close to zero, false otherwise
+constexpr bool NearZero(const double z)
 {
-  return std::fabs(x) < tolerance;
+  return std::fabs(z) < tolerance;
 }
 
 /// \brief Normalize a vector to unit length
