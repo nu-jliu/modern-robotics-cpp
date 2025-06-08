@@ -105,6 +105,19 @@ const arma::vec EndEffectorForces(
   const std::vector<arma::vec6> & Slist
 );
 
+/// \brief Computes forward dynamics in the space frame for an open chain robot
+/// \param thetalist A list of joint variables
+/// \param dthetalist A list of joint rates
+/// \param taulist An n-vector of joint forces/torques
+/// \param g Gravity vector g
+/// \param Ftip Spatial force applied by the end-effector expressed in frame {n+1}
+/// \param Mlist List of link frames i relative to i-1 at the home position
+/// \param Glist Spatial inertia matrices Gi of the links
+/// \param Slist Screw axes Si of the joints in a space frame, in the format
+///              of a matrix with axes as the columns
+/// \return The resulting joint accelerations
+/// \details This function computes ddthetalist by solving:
+///          Mlist(thetalist) * ddthetalist = taulist - c(thetalist,dthetalist) - g(thetalist) - Jtr(thetalist) * Ftip
 const arma::vec ForwardDynamics(
   const arma::vec & thetalist,
   const arma::vec & dthetalist,

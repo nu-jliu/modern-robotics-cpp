@@ -191,4 +191,26 @@ const arma::vec EndEffectorForces(
   );
   return JTFtip;
 }
+
+const arma::vec ForwardDynamics(
+  const arma::vec & thetalist,
+  const arma::vec & dthetalist,
+  const arma::vec & taulist,
+  const arma::vec3 & g,
+  const arma::vec6 & Ftip,
+  const std::vector<arma::mat44> & Mlist,
+  const std::vector<arma::mat66> & Glist,
+  const std::vector<arma::vec6> & Slist
+)
+{
+  const arma::mat Mmat = MassMatrix(thetalist, Mlist, Glist, Slist);
+  const arma::vec c = VelQuandraticForces(thetalist, dthetalist, Mlist, Glist, Slist);
+  const arma::vec grav = GravityForces(thetalist, g, Mlist, Glist, Slist);
+  const arma::vec JTFtip = EndEffectorForces(thetalist, Ftip, Mlist, Glist, Slist);
+
+  const arma::mat Minv = Mmat.i();
+  const arma::vec rhs = taulist - c - grav - JTFtip;
+
+  return Minv * rhs;
+}
 }

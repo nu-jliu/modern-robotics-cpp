@@ -332,3 +332,68 @@ TEST_CASE("Test end effector force", "[EndEffectorForces]")
   REQUIRE_THAT(JTFtip.at(1), Catch::Matchers::WithinAbs(1.85771497, TOLERANCE));
   REQUIRE_THAT(JTFtip.at(2), Catch::Matchers::WithinAbs(1.392409, TOLERANCE));
 }
+
+TEST_CASE("Test forward dynamics", "[ForwardDynamics]")
+{
+  const arma::vec thetalist{0.1, 0.1, 0.1};
+  const arma::vec dthetalist{0.1, 0.2, 0.3};
+  const arma::vec taulist{0.5, 0.6, 0.7};
+  const arma::vec3 g{0, 0, -9.8};
+  const arma::vec6 Ftip{1, 1, 1, 1, 1, 1};
+
+  const arma::mat44 M01{
+    {1, 0, 0, 0},
+    {0, 1, 0, 0},
+    {0, 0, 1, 0.089159},
+    {0, 0, 0, 1}
+  };
+  const arma::mat44 M12{
+    {0, 0, 1, 0.28},
+    {0, 1, 0, 0.13585},
+    {-1, 0, 0, 0},
+    {0, 0, 0, 1}
+  };
+  const arma::mat44 M23{
+    {1, 0, 0, 0},
+    {0, 1, 0, -0.1197},
+    {0, 0, 1, 0.395},
+    {0, 0, 0, 1}
+  };
+  const arma::mat44 M34 {
+    {1, 0, 0, 0},
+    {0, 1, 0, 0},
+    {0, 0, 1, 0.14225},
+    {0, 0, 0, 1}
+  };
+  const arma::mat66 G1 = arma::diagmat(arma::vec6{0.010267, 0.010267, 0.00666, 3.7, 3.7, 3.7});
+  const arma::mat66 G2 = arma::diagmat(
+    arma::vec6{0.22689, 0.22689, 0.0151074, 8.393, 8.393, 8.393}
+  );
+  const arma::mat66 G3 = arma::diagmat(
+    arma::vec6{0.0494433, 0.0494433, 0.004095, 2.275, 2.275, 2.275}
+  );
+  const std::vector<arma::mat44> Mlist{M01, M12, M23, M34};
+  const std::vector<arma::mat66> Glist{G1, G2, G3};
+  const std::vector<arma::vec6> Slist{
+    {1, 0, 1, 0, 1, 0},
+    {0, 1, 0, -0.089, 0, 0},
+    {0, 1, 0, -0.089, 0, 0.425}
+  };
+
+  const arma::vec ddthetalist = mr::ForwardDynamics(
+    thetalist,
+    dthetalist,
+    taulist,
+    g,
+    Ftip,
+    Mlist,
+    Glist,
+    Slist
+  );
+  // std::cout << ddthetalist << std::endl;
+
+  REQUIRE(ddthetalist.size() == 3);
+  REQUIRE_THAT(ddthetalist.at(0), Catch::Matchers::WithinAbs(-0.97392907, TOLERANCE));
+  REQUIRE_THAT(ddthetalist.at(1), Catch::Matchers::WithinAbs(25.58466784, TOLERANCE));
+  REQUIRE_THAT(ddthetalist.at(2), Catch::Matchers::WithinAbs(-32.91499212, TOLERANCE));
+}
