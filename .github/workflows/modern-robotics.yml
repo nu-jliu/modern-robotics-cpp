@@ -35,7 +35,7 @@ jobs:
     - name: Install dot
       run: |
         sudo apt update
-        sudo apt install graphviz
+        sudo apt install graphviz -y
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
@@ -68,6 +68,11 @@ jobs:
       with:
         name: build
         path: ${{github.workspace}}/build
+
+    - name: Install Armadillo
+      run: |
+        sudo apt update
+        sudo apt install libarmadillo-dev -y
 
     - name: Test
       working-directory: ${{github.workspace}}/build
