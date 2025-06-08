@@ -68,14 +68,6 @@ int main(int argc, char * argv[]) {
 }
 ```
 
-Example output:
-
-\f{bmatrix}{
-1 & 4 & 7 \\
-2 & 5 & 8 \\
-3 & 6 & 9
-\f}
-
 To use with CMake package
 
 ```cmake
