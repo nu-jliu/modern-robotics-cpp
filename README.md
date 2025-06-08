@@ -29,6 +29,8 @@ Source code: [source](https://github.com/nu-jliu/modern-robotics-cpp)
 
 3. Velocity Kinematics and Statics: includes all functions that compute jacobian for a open-chain robot systsm.
 
+4. Dynamics of Open Chain: includes all function necessary to compute the dynamics of the open-chain robot systems.
+
 ## Installation
 
 Building from source:
