@@ -152,7 +152,7 @@ const std::tuple<const arma::vec, const arma::vec> EulerStep(
 ///        Runge–Kutta methods integration
 /// \param thetalist n-vector of joint variables
 /// \param dthetalist n-vector of joint rates
-/// \param ddthetalist n-vector of joint accelerations
+/// \param f function that calculate the ddthetalist
 /// \param dt The timestep delta t
 /// \return thetalistNext: Vector of joint variables after dt from Runge–Kutta methods integration
 /// \return dthetalistNext: Vector of joint rates after dt from Runge–Kutta methods integration
