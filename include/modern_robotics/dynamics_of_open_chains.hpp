@@ -129,30 +129,100 @@ const arma::vec ForwardDynamics(
   const std::vector<arma::vec6> & Slist
 );
 
+/// \brief Compute the joint angles and velocities at the next timestep using
+///        first order Euler integration
+/// \param thetalist n-vector of joint variables
+/// \param dthetalist n-vector of joint rates
+/// \param ddthetalist n-vector of joint accelerations
+/// \param dt The timestep delta t
+/// \return thetalistNext: Vector of joint variables after dt from first order Euler integration
+/// \return dthetalistNext: Vector of joint rates after dt from first order Euler integration
 const std::tuple<const arma::vec, const arma::vec> EulerStep(
   const arma::vec & thetalist,
   const arma::vec & dthetalist,
-  const arma::vec & ddthetalist
+  const arma::vec & ddthetalist,
+  const double dt
 );
 
+/// \brief Compute the joint angles and velocities at the next timestep using
+///        Runge–Kutta methods integration
+/// \param thetalist n-vector of joint variables
+/// \param dthetalist n-vector of joint rates
+/// \param ddthetalist n-vector of joint accelerations
+/// \param dt The timestep delta t
+/// \return thetalistNext: Vector of joint variables after dt from Runge–Kutta methods integration
+/// \return dthetalistNext: Vector of joint rates after dt from Runge–Kutta methods integration
+const std::tuple<const arma::vec, const arma::vec> RK4Step(
+  const arma::vec & thetalist,
+  const arma::vec & dthetalist,
+  const std::function<
+    const std::tuple<
+      const arma::vec,
+      const arma::vec
+    >(
+      const arma::vec &,
+      const arma::vec &
+    )
+  > & f,
+  const double dt
+);
+
+/// @brief Calculates the joint forces/torques required to move the serial chain
+///        along the given trajectory using inverse dynamics
+/// @param thetamat An N x n matrix of robot joint variables
+/// @param dthetamat An N x n matrix of robot joint velocities
+/// @param ddthetamat An N x n matrix of robot joint accelerations
+/// @param g Gravity vector g
+/// @param Ftipmat An N x 6 matrix of spatial forces applied by the end-
+///                effector (If there are no tip forces the user should
+///                input a zero and a zero matrix will be used)
+/// @param Mlist List of link frames i relative to i-1 at the home position
+/// @param Glist Spatial inertia matrices Gi of the links
+/// @param Slist Screw axes Si of the joints in a space frame, in the format
+///              of a matrix with axes as the columns
+/// @return  The N x n matrix of joint forces/torques for the specified
+///          trajectory, where each of the N rows is the vector of joint
+///          forces/torques at each time step
 const std::vector<arma::vec> InverseDynamicsTrajectory(
   const std::vector<arma::vec> & thetamat,
   const std::vector<arma::vec> & dthetamat,
   const std::vector<arma::vec> & ddthetamat,
   const arma::vec3 & g,
-  const arma::vec6 & Ftip,
+  const std::vector<arma::vec6> & Ftipmat,
   const std::vector<arma::mat44> & Mlist,
   const std::vector<arma::mat66> & Glist,
   const std::vector<arma::vec6> & Slist
 );
 
+/// \brief Simulates the motion of a serial chain given an open-loop history of
+///        joint forces/torques
+/// \param thetalist n-vector of initial joint variables
+/// \param dthetalist n-vector of initial joint rates
+/// \param taumat An N x n matrix of joint forces/torques, where each row is
+///               the joint effort at any time step
+/// \param g Gravity vector g
+/// \param Ftipmat  An N x 6 matrix of spatial forces applied by the end-
+///                 effector (If there are no tip forces the user should
+///                 input a zero and a zero matrix will be used)
+/// \param Mlist List of link frames {i} relative to {i-1} at the home position
+/// \param Glist Spatial inertia matrices Gi of the links
+/// \param Slist Screw axes Si of the joints in a space frame, in the format
+///              of a matrix with axes as the columns
+/// \param dt The timestep between consecutive joint forces/torques
+/// \param intRes Integration resolution is the number of times integration
+///               (Euler) takes places between each time step. Must be an
+///               integer value greater than or equal to 1
+/// \return thetamat: The N x n matrix of robot joint angles resulting from
+///                   the specified joint forces/torques
+/// \return dthetamat: The N x n matrix of robot joint velocities
+/// \details This function calls a numerical integration procedure that uses ForwardDynamics.
 const std::tuple<const std::vector<arma::vec>, const std::vector<arma::vec>>
 ForwardDynamicsTrajectory(
   const arma::vec & thetalist,
   const arma::vec & dthetalist,
   const std::vector<arma::vec> & taumat,
   const arma::vec3 & g,
-  const arma::vec6 & Ftip,
+  const std::vector<arma::vec6> & Ftipmat,
   const std::vector<arma::mat44> & Mlist,
   const std::vector<arma::mat66> & Glist,
   const std::vector<arma::vec6> & Slist,

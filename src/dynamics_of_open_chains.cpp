@@ -213,4 +213,129 @@ const arma::vec ForwardDynamics(
 
   return Minv * rhs;
 }
+
+const std::tuple<const arma::vec, const arma::vec> EulerStep(
+  const arma::vec & thetalist,
+  const arma::vec & dthetalist,
+  const arma::vec & ddthetalist,
+  const double dt
+)
+{
+  const arma::vec thetalistNext = thetalist + dthetalist * dt;
+  const arma::vec dthetalistNext = dthetalist + ddthetalist * dt;
+
+  return {thetalistNext, dthetalistNext};
+}
+
+const std::tuple<const arma::vec, const arma::vec> RK4Step(
+  const arma::vec & thetalist,
+  const arma::vec & dthetalist,
+  const std::function<
+    const std::tuple<
+      const arma::vec,
+      const arma::vec
+    >(
+      const arma::vec &,
+      const arma::vec &
+    )
+  > & f,
+  const double dt
+)
+{
+  const auto &[k1, dk1] = f(thetalist, dthetalist);
+  const auto &[k2, dk2] = f(thetalist + dt / 2. * k1, dthetalist + dt / 2. * dk1);
+  const auto &[k3, dk3] = f(thetalist + dt / 2. * k2, dthetalist + dt / 2. * dk2);
+  const auto &[k4, dk4] = f(thetalist + dt * k3, dthetalist + dt * dk3);
+
+  const arma::vec thetalistNext = thetalist + dt / 6. * (k1 + 2. * k2 + 2. * k3 + k4);
+  const arma::vec dthetalistNext = dthetalist + dt / 6. * (dk1 + 2. * dk2 + 2. * dk3 + dk4);
+
+  return {thetalistNext, dthetalistNext};
+}
+
+const std::vector<arma::vec> InverseDynamicsTrajectory(
+  const std::vector<arma::vec> & thetamat,
+  const std::vector<arma::vec> & dthetamat,
+  const std::vector<arma::vec> & ddthetamat,
+  const arma::vec3 & g,
+  const std::vector<arma::vec6> & Ftipmat,
+  const std::vector<arma::mat44> & Mlist,
+  const std::vector<arma::mat66> & Glist,
+  const std::vector<arma::vec6> & Slist
+)
+{
+  std::vector<arma::vec> taumat;
+
+  for (size_t i = 0; i < thetamat.size(); ++i) {
+    const arma::vec thetalist = thetamat.at(i);
+    const arma::vec dthetalist = dthetamat.at(i);
+    const arma::vec ddthetalist = ddthetamat.at(i);
+    const arma::vec6 Ftip = Ftipmat.at(i);
+
+    const arma::vec taulist = mr::InverseDynamics(
+      thetalist,
+      dthetalist,
+      ddthetalist,
+      g,
+      Ftip,
+      Mlist,
+      Glist,
+      Slist
+    );
+    taumat.push_back(taulist);
+  }
+
+  return taumat;
+}
+
+const std::tuple<const std::vector<arma::vec>, const std::vector<arma::vec>>
+ForwardDynamicsTrajectory(
+  const arma::vec & thetalist,
+  const arma::vec & dthetalist,
+  const std::vector<arma::vec> & taumat,
+  const arma::vec3 & g,
+  const std::vector<arma::vec6> & Ftipmat,
+  const std::vector<arma::mat44> & Mlist,
+  const std::vector<arma::mat66> & Glist,
+  const std::vector<arma::vec6> & Slist,
+  const double dt,
+  const int intRes
+)
+{
+  arma::vec theta{thetalist};
+  arma::vec dtheta{dthetalist};
+
+  std::vector<arma::vec> thetamat;
+  std::vector<arma::vec> dthetamat;
+  thetamat.push_back(theta);
+  dthetamat.push_back(dtheta);
+
+  for (size_t i = 0; i < taumat.size() - 1; ++i) {
+    const arma::vec taulist = taumat.at(i);
+    const arma::vec6 Ftip = Ftipmat.at(i);
+
+    for (int j = 0; j < intRes; ++j) {
+
+      const arma::vec ddtheta = ForwardDynamics(
+        theta,
+        dtheta,
+        taulist,
+        g,
+        Ftip,
+        Mlist,
+        Glist,
+        Slist
+      );
+
+      const auto result = EulerStep(theta, dtheta, ddtheta, dt);
+      theta = std::get<0>(result);
+      dtheta = std::get<1>(result);
+    }
+
+    thetamat.push_back(theta);
+    dthetamat.push_back(dtheta);
+  }
+
+  return {thetamat, dthetamat};
+}
 }
