@@ -87,6 +87,7 @@ const arma::vec GravityForces(
   const std::vector<arma::vec6> & Slist
 );
 
+/// \ingroup dynamics_open_open_chains
 /// @brief Computes the joint forces/torques an open chain robot requires only to
 ///        create the end-effector force Ftip
 /// @param thetalist A list of joint variables
@@ -105,6 +106,7 @@ const arma::vec EndEffectorForces(
   const std::vector<arma::vec6> & Slist
 );
 
+/// \ingroup dynamics_open_open_chains
 /// \brief Computes forward dynamics in the space frame for an open chain robot
 /// \param thetalist A list of joint variables
 /// \param dthetalist A list of joint rates
@@ -129,6 +131,7 @@ const arma::vec ForwardDynamics(
   const std::vector<arma::vec6> & Slist
 );
 
+/// \ingroup dynamics_open_open_chains
 /// \brief Compute the joint angles and velocities at the next timestep using
 ///        first order Euler integration
 /// \param thetalist n-vector of joint variables
@@ -144,6 +147,7 @@ const std::tuple<const arma::vec, const arma::vec> EulerStep(
   const double dt
 );
 
+/// \ingroup dynamics_open_open_chains
 /// \brief Compute the joint angles and velocities at the next timestep using
 ///        Runge–Kutta methods integration
 /// \param thetalist n-vector of joint variables
@@ -167,20 +171,21 @@ const std::tuple<const arma::vec, const arma::vec> RK4Step(
   const double dt
 );
 
-/// @brief Calculates the joint forces/torques required to move the serial chain
+/// \ingroup dynamics_open_open_chains
+/// \brief Calculates the joint forces/torques required to move the serial chain
 ///        along the given trajectory using inverse dynamics
-/// @param thetamat An N x n matrix of robot joint variables
-/// @param dthetamat An N x n matrix of robot joint velocities
-/// @param ddthetamat An N x n matrix of robot joint accelerations
-/// @param g Gravity vector g
-/// @param Ftipmat An N x 6 matrix of spatial forces applied by the end-
+/// \param thetamat An N x n matrix of robot joint variables
+/// \param dthetamat An N x n matrix of robot joint velocities
+/// \param ddthetamat An N x n matrix of robot joint accelerations
+/// \param g Gravity vector g
+/// \param Ftipmat An N x 6 matrix of spatial forces applied by the end-
 ///                effector (If there are no tip forces the user should
 ///                input a zero and a zero matrix will be used)
-/// @param Mlist List of link frames i relative to i-1 at the home position
-/// @param Glist Spatial inertia matrices Gi of the links
-/// @param Slist Screw axes Si of the joints in a space frame, in the format
+/// \param Mlist List of link frames i relative to i-1 at the home position
+/// \param Glist Spatial inertia matrices Gi of the links
+/// \param Slist Screw axes Si of the joints in a space frame, in the format
 ///              of a matrix with axes as the columns
-/// @return  The N x n matrix of joint forces/torques for the specified
+/// \return  The N x n matrix of joint forces/torques for the specified
 ///          trajectory, where each of the N rows is the vector of joint
 ///          forces/torques at each time step
 const std::vector<arma::vec> InverseDynamicsTrajectory(
@@ -194,6 +199,7 @@ const std::vector<arma::vec> InverseDynamicsTrajectory(
   const std::vector<arma::vec6> & Slist
 );
 
+/// \ingroup dynamics_open_open_chains
 /// \brief Simulates the motion of a serial chain given an open-loop history of
 ///        joint forces/torques
 /// \param thetalist n-vector of initial joint variables
