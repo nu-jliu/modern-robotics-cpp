@@ -67,7 +67,7 @@ jobs:
     - name: Download artifact
       uses: actions/download-artifact@v4
       with:
-        name: ubuntu220build
+        name: ubuntu22-build
         path: ${{github.workspace}}/build
 
     - name: Install Armadillo
