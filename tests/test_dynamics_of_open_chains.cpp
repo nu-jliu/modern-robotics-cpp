@@ -412,8 +412,8 @@ TEST_CASE("Test Euler Step", "[EulerStep]")
     ddthetalist,
     dt
   );
-  std::cout << thetalistNext << std::endl;
-  std::cout << dthetalistNext << std::endl;
+  // std::cout << thetalistNext << std::endl;
+  // std::cout << dthetalistNext << std::endl;
 
   REQUIRE_THAT(thetalistNext.at(0), Catch::Matchers::WithinAbs(0.11, TOLERANCE));
   REQUIRE_THAT(thetalistNext.at(1), Catch::Matchers::WithinAbs(0.12, TOLERANCE));
