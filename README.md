@@ -1,6 +1,7 @@
 # Modern Robotics C++
 
-[![Build Status](https://github.com/nu-jliu/modern-robotics-cpp/actions/workflows/modern-robotics.yml/badge.svg)](https://github.com/nu-jliu/modern-robotics-cpp/actions)
+[![Ubuntu22](https://github.com/nu-jliu/modern-robotics-cpp/actions/workflows/ubuntu22.yml/badge.svg)](https://github.com/nu-jliu/modern-robotics-cpp/actions)
+[![Ubuntu24](https://github.com/nu-jliu/modern-robotics-cpp/actions/workflows/ubuntu24.yml/badge.svg)](https://github.com/nu-jliu/modern-robotics-cpp/actions)
 
 A comprehensive Modern C++ implementation of robotics algorithms from the textbook [*Modern Robotics: Mechanics, Planning, and Control*](http://modernrobotics.org) by Kevin Lynch and Frank Park (Cambridge University Press 2017).
 
@@ -16,7 +17,7 @@ A comprehensive Modern C++ implementation of robotics algorithms from the textbo
 
 | Component | Minimum Version | Tested Version |
 |-----------|----------------|----------------|
-| **OS** | Ubuntu 20.04+ | Ubuntu 22.04.5 LTS |
+| **OS** | Ubuntu 22.04+ | Ubuntu 22.04.5 LTS |
 | **CMake** | 3.16+ | 3.22.1 |
 | **Compiler** | GCC 9+ or Clang 10+ | GCC 11.4.0 |
 | **Armadillo** | 9.900+ | 10.8.2 |
