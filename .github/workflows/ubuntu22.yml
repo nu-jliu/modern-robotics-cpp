@@ -50,13 +50,13 @@ jobs:
     - name: Upload built artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: build
+        name: ubuntu22-build
         path: ${{github.workspace}}/build
 
     - name: Upload documents
       uses: actions/upload-artifact@v4
       with:
-        name: documents
+        name: ubuntu22-docs
         path: ${{github.workspace}}/build/doc/html
 
   test:
@@ -67,7 +67,7 @@ jobs:
     - name: Download artifact
       uses: actions/download-artifact@v4
       with:
-        name: build
+        name: ubuntu220build
         path: ${{github.workspace}}/build
 
     - name: Install Armadillo
@@ -92,7 +92,7 @@ jobs:
     - name: Download documents
       uses: actions/download-artifact@v4
       with:
-        name: documents
+        name: ubuntu22-docs
         path: ${{github.workspace}}/doc
 
     - name: Deploy to GitHub Pages
