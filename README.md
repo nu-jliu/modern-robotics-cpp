@@ -54,7 +54,18 @@ This library provides a complete implementation of fundamental robotics algorith
 
 - **📊 Trajectory Generation** (Chapter 9)
   - Point-to-point trajectory planning
-  - Polynomial and trapezoidal profiles
+  - Cubic and quintic polynomial time scaling
+  - Joint space, screw motion, and Cartesian trajectories
+
+- **🎮 Robot Control** (Chapter 11)
+  - Computed torque control implementation
+  - PID feedback control with feedforward
+  - Control simulation and trajectory tracking
+
+- **🔧 Utilities**
+  - Mathematical constants and tolerance settings
+  - Vector normalization and near-zero checking
+  - Common robotics utility functions
 
 ## 📦 Installation
 
@@ -93,11 +104,12 @@ sudo make install
 
 ## 💡 Quick Start
 
-### Basic Usage Example
+### Basic Usage Examples
 
+#### Rigid Body Motions
 ```cpp
 #include <iostream>
-#include <modern_robotics/all.hpp>  // Include entire library
+#include <modern_robotics/all.hpp>
 
 int main() {
     // Create a rotation matrix
@@ -115,6 +127,31 @@ int main() {
     
     return 0;
 }
+```
+
+#### Trajectory Generation
+```cpp
+#include <modern_robotics/trajectory_generation.hpp>
+
+// Generate a joint space trajectory
+arma::vec thetastart = {0, 0, 0};
+arma::vec thetaend = {1.57, 0.5, -0.3};
+double Tf = 3.0;  // 3 seconds
+size_t N = 100;   // 100 points
+
+auto trajectory = mr::JointTrajectory(thetastart, thetaend, Tf, N, 
+                                     mr::Method::Quintic);
+```
+
+#### Robot Control
+```cpp
+#include <modern_robotics/robot_control.hpp>
+
+// Compute control torques using PID + feedforward
+arma::vec tau = mr::ComputeTorque(thetalist, dthetalist, eint, g, 
+                                 Mlist, Glist, Slist,
+                                 thetalistd, dthetalistd, ddthetalistd,
+                                 kp, ki, kd);
 ```
 
 ### CMake Integration
@@ -141,15 +178,31 @@ cd build && ctest
 
 ```
 modern-robotics-cpp/
-├── include/modern_robotics/    # Public headers
-│   ├── all.hpp                # Convenience header (includes everything)
-│   ├── rigid_body_motions.hpp
-│   ├── forward_kinematics.hpp
-│   └── ...
-├── src/                       # Implementation files
-├── tests/                     # Unit tests
-├── docs/                      # Documentation
-└── examples/                  # Usage examples
+├── include/modern_robotics/              # Public headers
+│   ├── all.hpp                          # Convenience header (includes everything)
+│   ├── rigid_body_motions.hpp           # Chapter 3: Rotations & transformations
+│   ├── forward_kinematics.hpp           # Chapter 4: Forward kinematics
+│   ├── velocity_kinematics_and_statics.hpp # Chapter 5: Jacobians & velocity
+│   ├── inverse_kinematics.hpp           # Chapter 6: Inverse kinematics
+│   ├── dynamics_of_open_chains.hpp      # Chapter 8: Dynamics algorithms
+│   ├── trajectory_generation.hpp        # Chapter 9: Motion planning
+│   ├── robot_control.hpp                # Chapter 11: Control algorithms
+│   └── utils.hpp                        # Mathematical utilities
+├── src/                                 # Implementation files (.cpp)
+├── tests/                               # Unit tests (Catch2 framework)
+│   ├── test_rigid_body_motions.cpp
+│   ├── test_forward_kinematics.cpp
+│   ├── test_velocity_kinematics_and_statics.cpp
+│   ├── test_inverse_kinematics.cpp
+│   ├── test_dynamics_of_open_chains.cpp
+│   ├── test_trajectory_generation.cpp
+│   ├── test_robot_control.cpp
+│   └── test_utils.cpp
+├── build/                               # Build directory (generated)
+├── CMakeLists.txt                       # CMake configuration
+├── Doxyfile.in                         # Doxygen documentation config
+├── CLAUDE.md                           # Claude Code development guide
+└── LICENSE                             # MIT License
 ```
 
 ## 🧪 Development
@@ -160,6 +213,16 @@ modern-robotics-cpp/
 cd build
 ctest --verbose              # Run all tests with output
 ctest -R rigid_body         # Run specific test group
+
+# Run individual test executables
+./tests/test_rigid_body_motions
+./tests/test_forward_kinematics
+./tests/test_velocity_kinematics_and_statics
+./tests/test_inverse_kinematics
+./tests/test_dynamics_of_open_chains
+./tests/test_trajectory_generation
+./tests/test_robot_control
+./tests/test_utils
 ```
 
 ### Generating Documentation
@@ -167,7 +230,34 @@ ctest -R rigid_body         # Run specific test group
 ```bash
 cd build
 make doc                    # Generates docs in build/docs/html/
+# Open documentation: firefox build/docs/html/index.html
 ```
+
+### Code Architecture & Design
+
+This library follows modern C++ best practices and robotics conventions:
+
+#### Type System
+- **Armadillo matrices**: `arma::mat33`, `arma::mat44`, `arma::mat66` for fixed-size matrices
+- **Armadillo vectors**: `arma::vec3`, `arma::vec6`, `arma::vec` for dynamic vectors
+- **Const correctness**: Functions return `const` values to prevent accidental modification
+- **Namespace**: All functionality contained within `mr` namespace
+
+#### Parameter Conventions
+- Parameter names match textbook notation exactly (e.g., `Slist`, `Blist`, `thetalist`)
+- **Slist**: Screw axes in space frame (6×n matrix as vector of 6-vectors)
+- **Blist**: Screw axes in body frame (6×n matrix as vector of 6-vectors)
+- **Mlist**: Link frames relative to previous frame (vector of 4×4 matrices)
+- **Glist**: Spatial inertia matrices (vector of 6×6 matrices)
+
+#### Mathematical Constants
+- Global tolerance: `mr::tolerance = 1e-6`
+- Utility functions for near-zero checking and vector normalization
+
+#### Testing Framework
+- **Catch2** framework for comprehensive unit testing
+- Floating-point comparisons use `Catch::Matchers::WithinAbs(expected, TOLERANCE)`
+- Each module has corresponding test file with mathematical validation
 
 ## 📄 License
 
